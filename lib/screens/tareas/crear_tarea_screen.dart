@@ -18,6 +18,7 @@ class _CrearTareaScreenState extends ConsumerState<CrearTareaScreen> {
   final _tituloCtrl = TextEditingController();
   final _descripcionCtrl = TextEditingController();
   DateTime? _fechaLimite;
+  TimeOfDay? _horaLimite;
   String _prioridad = 'media';
   bool _guardando = false;
 
@@ -39,8 +40,19 @@ class _CrearTareaScreenState extends ConsumerState<CrearTareaScreen> {
     if (fecha != null) setState(() => _fechaLimite = fecha);
   }
 
+  Future<void> _seleccionarHora() async {
+    final hora = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+    if (hora != null) setState(() => _horaLimite = hora);
+  }
+
   String _formatFecha(DateTime f) =>
       '${f.day.toString().padLeft(2, '0')}/${f.month.toString().padLeft(2, '0')}/${f.year}';
+
+  String _formatHora(TimeOfDay t) =>
+      '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}';
 
   Future<void> _guardar() async {
     if (!_formKey.currentState!.validate()) return;
@@ -62,6 +74,9 @@ class _CrearTareaScreenState extends ConsumerState<CrearTareaScreen> {
           ),
           fechaLimite: drift.Value(
             _fechaLimite != null ? _formatFecha(_fechaLimite!) : null,
+          ),
+          horaLimite: drift.Value(
+            _horaLimite != null ? _formatHora(_horaLimite!) : null,
           ),
           prioridad: drift.Value(_prioridad),
         ),
@@ -129,38 +144,80 @@ class _CrearTareaScreenState extends ConsumerState<CrearTareaScreen> {
                 textCapitalization: TextCapitalization.sentences,
               ),
               const SizedBox(height: 16),
-              GestureDetector(
-                onTap: _seleccionarFecha,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 16,
-                  ),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: Row(
-                    children: [
-                      const Icon(
-                        Icons.calendar_today,
-                        color: Colors.grey,
-                        size: 18,
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        _fechaLimite == null
-                            ? 'Fecha límite (opcional)'
-                            : _formatFecha(_fechaLimite!),
-                        style: TextStyle(
-                          color: _fechaLimite == null
-                              ? Colors.grey[600]
-                              : Colors.black,
+              Row(
+                children: [
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: _seleccionarFecha,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 16,
+                        ),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.calendar_today,
+                              color: Colors.grey,
+                              size: 18,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              _fechaLimite == null
+                                  ? 'Fecha límite'
+                                  : _formatFecha(_fechaLimite!),
+                              style: TextStyle(
+                                color: _fechaLimite == null
+                                    ? Colors.grey[600]
+                                    : Colors.black,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ],
+                    ),
                   ),
-                ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: _seleccionarHora,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 16,
+                        ),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.access_time,
+                              color: Colors.grey,
+                              size: 18,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              _horaLimite == null
+                                  ? 'Hora límite'
+                                  : _formatHora(_horaLimite!),
+                              style: TextStyle(
+                                color: _horaLimite == null
+                                    ? Colors.grey[600]
+                                    : Colors.black,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 16),
               const Text(

@@ -24,6 +24,7 @@ class Tareas extends Table {
   TextColumn get titulo => text()();
   TextColumn get descripcion => text().nullable()();
   TextColumn get fechaLimite => text().nullable()();
+  TextColumn get horaLimite => text().nullable()();
   TextColumn get prioridad => text().withDefault(const Constant('media'))();
   TextColumn get estado => text().withDefault(const Constant('pendiente'))();
 }

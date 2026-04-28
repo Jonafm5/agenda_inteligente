@@ -52,7 +52,6 @@ class TareasScreen extends ConsumerWidget {
       appBar: AppBar(title: const Text('Tareas'), centerTitle: true),
       body: tareasAsync.when(
         data: (tareas) {
-          // Actualizar estado de vencidas automáticamente
           final ahora = DateTime.now();
           for (final tarea in tareas) {
             if (tarea.estado == 'pendiente' && tarea.fechaLimite != null) {
@@ -105,9 +104,30 @@ class TareasScreen extends ConsumerWidget {
               return Card(
                 margin: const EdgeInsets.symmetric(vertical: 4),
                 child: ListTile(
-                  leading: Icon(
-                    _iconEstado(tarea.estado),
-                    color: _colorEstado(tarea.estado),
+                  leading: GestureDetector(
+                    onTap: () async {
+                      final nuevoEstado = tarea.estado == 'completada'
+                          ? 'pendiente'
+                          : 'completada';
+                      await ref
+                          .read(databaseProvider)
+                          .updateTarea(
+                            TareasCompanion(
+                              id: drift.Value(tarea.id),
+                              usuarioId: drift.Value(tarea.usuarioId),
+                              titulo: drift.Value(tarea.titulo),
+                              descripcion: drift.Value(tarea.descripcion),
+                              fechaLimite: drift.Value(tarea.fechaLimite),
+                              horaLimite: drift.Value(tarea.horaLimite),
+                              prioridad: drift.Value(tarea.prioridad),
+                              estado: drift.Value(nuevoEstado),
+                            ),
+                          );
+                    },
+                    child: Icon(
+                      _iconEstado(tarea.estado),
+                      color: _colorEstado(tarea.estado),
+                    ),
                   ),
                   title: Text(
                     tarea.titulo,
@@ -119,7 +139,10 @@ class TareasScreen extends ConsumerWidget {
                     ),
                   ),
                   subtitle: tarea.fechaLimite != null
-                      ? Text('Vence: ${tarea.fechaLimite}')
+                      ? Text(
+                          'Vence: ${tarea.fechaLimite}'
+                          '${tarea.horaLimite != null ? ' a las ${tarea.horaLimite}' : ''}',
+                        )
                       : null,
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,

@@ -18,6 +18,7 @@ class _EditarTareaScreenState extends ConsumerState<EditarTareaScreen> {
   late final TextEditingController _tituloCtrl;
   late final TextEditingController _descripcionCtrl;
   DateTime? _fechaLimite;
+  TimeOfDay? _horaLimite;
   late String _prioridad;
   late String _estado;
   bool _guardando = false;
@@ -41,6 +42,16 @@ class _EditarTareaScreenState extends ConsumerState<EditarTareaScreen> {
         );
       }
     }
+
+    if (t.horaLimite != null) {
+      final horaParts = t.horaLimite!.split(':');
+      if (horaParts.length == 2) {
+        _horaLimite = TimeOfDay(
+          hour: int.parse(horaParts[0]),
+          minute: int.parse(horaParts[1]),
+        );
+      }
+    }
   }
 
   @override
@@ -61,8 +72,19 @@ class _EditarTareaScreenState extends ConsumerState<EditarTareaScreen> {
     if (fecha != null) setState(() => _fechaLimite = fecha);
   }
 
+  Future<void> _seleccionarHora() async {
+    final hora = await showTimePicker(
+      context: context,
+      initialTime: _horaLimite ?? TimeOfDay.now(),
+    );
+    if (hora != null) setState(() => _horaLimite = hora);
+  }
+
   String _formatFecha(DateTime f) =>
       '${f.day.toString().padLeft(2, '0')}/${f.month.toString().padLeft(2, '0')}/${f.year}';
+
+  String _formatHora(TimeOfDay t) =>
+      '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}';
 
   Future<void> _guardar() async {
     if (!_formKey.currentState!.validate()) return;
@@ -82,6 +104,9 @@ class _EditarTareaScreenState extends ConsumerState<EditarTareaScreen> {
           ),
           fechaLimite: drift.Value(
             _fechaLimite != null ? _formatFecha(_fechaLimite!) : null,
+          ),
+          horaLimite: drift.Value(
+            _horaLimite != null ? _formatHora(_horaLimite!) : null,
           ),
           prioridad: drift.Value(_prioridad),
           estado: drift.Value(_estado),
@@ -190,38 +215,80 @@ class _EditarTareaScreenState extends ConsumerState<EditarTareaScreen> {
                 textCapitalization: TextCapitalization.sentences,
               ),
               const SizedBox(height: 16),
-              GestureDetector(
-                onTap: _seleccionarFecha,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 16,
-                  ),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: Row(
-                    children: [
-                      const Icon(
-                        Icons.calendar_today,
-                        color: Colors.grey,
-                        size: 18,
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        _fechaLimite == null
-                            ? 'Sin fecha límite'
-                            : _formatFecha(_fechaLimite!),
-                        style: TextStyle(
-                          color: _fechaLimite == null
-                              ? Colors.grey[600]
-                              : Colors.black,
+              Row(
+                children: [
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: _seleccionarFecha,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 16,
+                        ),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.calendar_today,
+                              color: Colors.grey,
+                              size: 18,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              _fechaLimite == null
+                                  ? 'Sin fecha límite'
+                                  : _formatFecha(_fechaLimite!),
+                              style: TextStyle(
+                                color: _fechaLimite == null
+                                    ? Colors.grey[600]
+                                    : Colors.black,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ],
+                    ),
                   ),
-                ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: _seleccionarHora,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 16,
+                        ),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.access_time,
+                              color: Colors.grey,
+                              size: 18,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              _horaLimite == null
+                                  ? 'Sin hora límite'
+                                  : _formatHora(_horaLimite!),
+                              style: TextStyle(
+                                color: _horaLimite == null
+                                    ? Colors.grey[600]
+                                    : Colors.black,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 16),
               const Text(

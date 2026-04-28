@@ -516,6 +516,17 @@ class $TareasTable extends Tareas with TableInfo<$TareasTable, Tarea> {
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _horaLimiteMeta = const VerificationMeta(
+    'horaLimite',
+  );
+  @override
+  late final GeneratedColumn<String> horaLimite = GeneratedColumn<String>(
+    'hora_limite',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _prioridadMeta = const VerificationMeta(
     'prioridad',
   );
@@ -545,6 +556,7 @@ class $TareasTable extends Tareas with TableInfo<$TareasTable, Tarea> {
     titulo,
     descripcion,
     fechaLimite,
+    horaLimite,
     prioridad,
     estado,
   ];
@@ -597,6 +609,12 @@ class $TareasTable extends Tareas with TableInfo<$TareasTable, Tarea> {
         ),
       );
     }
+    if (data.containsKey('hora_limite')) {
+      context.handle(
+        _horaLimiteMeta,
+        horaLimite.isAcceptableOrUnknown(data['hora_limite']!, _horaLimiteMeta),
+      );
+    }
     if (data.containsKey('prioridad')) {
       context.handle(
         _prioridadMeta,
@@ -638,6 +656,10 @@ class $TareasTable extends Tareas with TableInfo<$TareasTable, Tarea> {
         DriftSqlType.string,
         data['${effectivePrefix}fecha_limite'],
       ),
+      horaLimite: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}hora_limite'],
+      ),
       prioridad: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}prioridad'],
@@ -661,6 +683,7 @@ class Tarea extends DataClass implements Insertable<Tarea> {
   final String titulo;
   final String? descripcion;
   final String? fechaLimite;
+  final String? horaLimite;
   final String prioridad;
   final String estado;
   const Tarea({
@@ -669,6 +692,7 @@ class Tarea extends DataClass implements Insertable<Tarea> {
     required this.titulo,
     this.descripcion,
     this.fechaLimite,
+    this.horaLimite,
     required this.prioridad,
     required this.estado,
   });
@@ -683,6 +707,9 @@ class Tarea extends DataClass implements Insertable<Tarea> {
     }
     if (!nullToAbsent || fechaLimite != null) {
       map['fecha_limite'] = Variable<String>(fechaLimite);
+    }
+    if (!nullToAbsent || horaLimite != null) {
+      map['hora_limite'] = Variable<String>(horaLimite);
     }
     map['prioridad'] = Variable<String>(prioridad);
     map['estado'] = Variable<String>(estado);
@@ -700,6 +727,9 @@ class Tarea extends DataClass implements Insertable<Tarea> {
       fechaLimite: fechaLimite == null && nullToAbsent
           ? const Value.absent()
           : Value(fechaLimite),
+      horaLimite: horaLimite == null && nullToAbsent
+          ? const Value.absent()
+          : Value(horaLimite),
       prioridad: Value(prioridad),
       estado: Value(estado),
     );
@@ -716,6 +746,7 @@ class Tarea extends DataClass implements Insertable<Tarea> {
       titulo: serializer.fromJson<String>(json['titulo']),
       descripcion: serializer.fromJson<String?>(json['descripcion']),
       fechaLimite: serializer.fromJson<String?>(json['fechaLimite']),
+      horaLimite: serializer.fromJson<String?>(json['horaLimite']),
       prioridad: serializer.fromJson<String>(json['prioridad']),
       estado: serializer.fromJson<String>(json['estado']),
     );
@@ -729,6 +760,7 @@ class Tarea extends DataClass implements Insertable<Tarea> {
       'titulo': serializer.toJson<String>(titulo),
       'descripcion': serializer.toJson<String?>(descripcion),
       'fechaLimite': serializer.toJson<String?>(fechaLimite),
+      'horaLimite': serializer.toJson<String?>(horaLimite),
       'prioridad': serializer.toJson<String>(prioridad),
       'estado': serializer.toJson<String>(estado),
     };
@@ -740,6 +772,7 @@ class Tarea extends DataClass implements Insertable<Tarea> {
     String? titulo,
     Value<String?> descripcion = const Value.absent(),
     Value<String?> fechaLimite = const Value.absent(),
+    Value<String?> horaLimite = const Value.absent(),
     String? prioridad,
     String? estado,
   }) => Tarea(
@@ -748,6 +781,7 @@ class Tarea extends DataClass implements Insertable<Tarea> {
     titulo: titulo ?? this.titulo,
     descripcion: descripcion.present ? descripcion.value : this.descripcion,
     fechaLimite: fechaLimite.present ? fechaLimite.value : this.fechaLimite,
+    horaLimite: horaLimite.present ? horaLimite.value : this.horaLimite,
     prioridad: prioridad ?? this.prioridad,
     estado: estado ?? this.estado,
   );
@@ -762,6 +796,9 @@ class Tarea extends DataClass implements Insertable<Tarea> {
       fechaLimite: data.fechaLimite.present
           ? data.fechaLimite.value
           : this.fechaLimite,
+      horaLimite: data.horaLimite.present
+          ? data.horaLimite.value
+          : this.horaLimite,
       prioridad: data.prioridad.present ? data.prioridad.value : this.prioridad,
       estado: data.estado.present ? data.estado.value : this.estado,
     );
@@ -775,6 +812,7 @@ class Tarea extends DataClass implements Insertable<Tarea> {
           ..write('titulo: $titulo, ')
           ..write('descripcion: $descripcion, ')
           ..write('fechaLimite: $fechaLimite, ')
+          ..write('horaLimite: $horaLimite, ')
           ..write('prioridad: $prioridad, ')
           ..write('estado: $estado')
           ..write(')'))
@@ -788,6 +826,7 @@ class Tarea extends DataClass implements Insertable<Tarea> {
     titulo,
     descripcion,
     fechaLimite,
+    horaLimite,
     prioridad,
     estado,
   );
@@ -800,6 +839,7 @@ class Tarea extends DataClass implements Insertable<Tarea> {
           other.titulo == this.titulo &&
           other.descripcion == this.descripcion &&
           other.fechaLimite == this.fechaLimite &&
+          other.horaLimite == this.horaLimite &&
           other.prioridad == this.prioridad &&
           other.estado == this.estado);
 }
@@ -810,6 +850,7 @@ class TareasCompanion extends UpdateCompanion<Tarea> {
   final Value<String> titulo;
   final Value<String?> descripcion;
   final Value<String?> fechaLimite;
+  final Value<String?> horaLimite;
   final Value<String> prioridad;
   final Value<String> estado;
   const TareasCompanion({
@@ -818,6 +859,7 @@ class TareasCompanion extends UpdateCompanion<Tarea> {
     this.titulo = const Value.absent(),
     this.descripcion = const Value.absent(),
     this.fechaLimite = const Value.absent(),
+    this.horaLimite = const Value.absent(),
     this.prioridad = const Value.absent(),
     this.estado = const Value.absent(),
   });
@@ -827,6 +869,7 @@ class TareasCompanion extends UpdateCompanion<Tarea> {
     required String titulo,
     this.descripcion = const Value.absent(),
     this.fechaLimite = const Value.absent(),
+    this.horaLimite = const Value.absent(),
     this.prioridad = const Value.absent(),
     this.estado = const Value.absent(),
   }) : usuarioId = Value(usuarioId),
@@ -837,6 +880,7 @@ class TareasCompanion extends UpdateCompanion<Tarea> {
     Expression<String>? titulo,
     Expression<String>? descripcion,
     Expression<String>? fechaLimite,
+    Expression<String>? horaLimite,
     Expression<String>? prioridad,
     Expression<String>? estado,
   }) {
@@ -846,6 +890,7 @@ class TareasCompanion extends UpdateCompanion<Tarea> {
       if (titulo != null) 'titulo': titulo,
       if (descripcion != null) 'descripcion': descripcion,
       if (fechaLimite != null) 'fecha_limite': fechaLimite,
+      if (horaLimite != null) 'hora_limite': horaLimite,
       if (prioridad != null) 'prioridad': prioridad,
       if (estado != null) 'estado': estado,
     });
@@ -857,6 +902,7 @@ class TareasCompanion extends UpdateCompanion<Tarea> {
     Value<String>? titulo,
     Value<String?>? descripcion,
     Value<String?>? fechaLimite,
+    Value<String?>? horaLimite,
     Value<String>? prioridad,
     Value<String>? estado,
   }) {
@@ -866,6 +912,7 @@ class TareasCompanion extends UpdateCompanion<Tarea> {
       titulo: titulo ?? this.titulo,
       descripcion: descripcion ?? this.descripcion,
       fechaLimite: fechaLimite ?? this.fechaLimite,
+      horaLimite: horaLimite ?? this.horaLimite,
       prioridad: prioridad ?? this.prioridad,
       estado: estado ?? this.estado,
     );
@@ -889,6 +936,9 @@ class TareasCompanion extends UpdateCompanion<Tarea> {
     if (fechaLimite.present) {
       map['fecha_limite'] = Variable<String>(fechaLimite.value);
     }
+    if (horaLimite.present) {
+      map['hora_limite'] = Variable<String>(horaLimite.value);
+    }
     if (prioridad.present) {
       map['prioridad'] = Variable<String>(prioridad.value);
     }
@@ -906,6 +956,7 @@ class TareasCompanion extends UpdateCompanion<Tarea> {
           ..write('titulo: $titulo, ')
           ..write('descripcion: $descripcion, ')
           ..write('fechaLimite: $fechaLimite, ')
+          ..write('horaLimite: $horaLimite, ')
           ..write('prioridad: $prioridad, ')
           ..write('estado: $estado')
           ..write(')'))
@@ -1782,6 +1833,7 @@ typedef $$TareasTableCreateCompanionBuilder =
       required String titulo,
       Value<String?> descripcion,
       Value<String?> fechaLimite,
+      Value<String?> horaLimite,
       Value<String> prioridad,
       Value<String> estado,
     });
@@ -1792,6 +1844,7 @@ typedef $$TareasTableUpdateCompanionBuilder =
       Value<String> titulo,
       Value<String?> descripcion,
       Value<String?> fechaLimite,
+      Value<String?> horaLimite,
       Value<String> prioridad,
       Value<String> estado,
     });
@@ -1827,6 +1880,11 @@ class $$TareasTableFilterComposer
 
   ColumnFilters<String> get fechaLimite => $composableBuilder(
     column: $table.fechaLimite,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get horaLimite => $composableBuilder(
+    column: $table.horaLimite,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -1875,6 +1933,11 @@ class $$TareasTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get horaLimite => $composableBuilder(
+    column: $table.horaLimite,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get prioridad => $composableBuilder(
     column: $table.prioridad,
     builder: (column) => ColumnOrderings(column),
@@ -1911,6 +1974,11 @@ class $$TareasTableAnnotationComposer
 
   GeneratedColumn<String> get fechaLimite => $composableBuilder(
     column: $table.fechaLimite,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get horaLimite => $composableBuilder(
+    column: $table.horaLimite,
     builder: (column) => column,
   );
 
@@ -1954,6 +2022,7 @@ class $$TareasTableTableManager
                 Value<String> titulo = const Value.absent(),
                 Value<String?> descripcion = const Value.absent(),
                 Value<String?> fechaLimite = const Value.absent(),
+                Value<String?> horaLimite = const Value.absent(),
                 Value<String> prioridad = const Value.absent(),
                 Value<String> estado = const Value.absent(),
               }) => TareasCompanion(
@@ -1962,6 +2031,7 @@ class $$TareasTableTableManager
                 titulo: titulo,
                 descripcion: descripcion,
                 fechaLimite: fechaLimite,
+                horaLimite: horaLimite,
                 prioridad: prioridad,
                 estado: estado,
               ),
@@ -1972,6 +2042,7 @@ class $$TareasTableTableManager
                 required String titulo,
                 Value<String?> descripcion = const Value.absent(),
                 Value<String?> fechaLimite = const Value.absent(),
+                Value<String?> horaLimite = const Value.absent(),
                 Value<String> prioridad = const Value.absent(),
                 Value<String> estado = const Value.absent(),
               }) => TareasCompanion.insert(
@@ -1980,6 +2051,7 @@ class $$TareasTableTableManager
                 titulo: titulo,
                 descripcion: descripcion,
                 fechaLimite: fechaLimite,
+                horaLimite: horaLimite,
                 prioridad: prioridad,
                 estado: estado,
               ),
