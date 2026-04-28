@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../screens/calendario/crear_evento_screen.dart';
 import '../../providers/usuario_provider.dart';
 import '../../screens/splash/splash_screen.dart';
 import '../../screens/perfil/configurar_perfil_screen.dart';
@@ -23,6 +24,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       ShellRoute(
         builder: (context, state, child) => MainShell(child: child),
         routes: [
+          GoRoute(
+            path: '/evento/crear',
+            builder: (context, state) => const CrearEventoScreen(),
+          ),
           GoRoute(
             path: '/calendario',
             builder: (context, state) => const CalendarioScreen(),
