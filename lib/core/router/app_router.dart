@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../screens/calendario/crear_evento_screen.dart';
+import '../../data/database/database_service.dart';
 import '../../providers/usuario_provider.dart';
 import '../../screens/splash/splash_screen.dart';
 import '../../screens/perfil/configurar_perfil_screen.dart';
 import '../../screens/calendario/calendario_screen.dart';
+import '../../screens/calendario/crear_evento_screen.dart';
+import '../../screens/calendario/editar_evento_screen.dart';
 import '../../screens/tareas/tareas_screen.dart';
 import '../../screens/configuracion/configuracion_screen.dart';
 
@@ -25,12 +27,17 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state, child) => MainShell(child: child),
         routes: [
           GoRoute(
+            path: '/calendario',
+            builder: (context, state) => const CalendarioScreen(),
+          ),
+          GoRoute(
             path: '/evento/crear',
             builder: (context, state) => const CrearEventoScreen(),
           ),
           GoRoute(
-            path: '/calendario',
-            builder: (context, state) => const CalendarioScreen(),
+            path: '/evento/editar',
+            builder: (context, state) =>
+                EditarEventoScreen(evento: state.extra as Evento),
           ),
           GoRoute(
             path: '/tareas',
