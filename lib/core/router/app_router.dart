@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../../screens/configuracion/editar_perfil_screen.dart';
 import '../../data/database/database_service.dart';
 import '../../screens/splash/splash_screen.dart';
 import '../../screens/perfil/configurar_perfil_screen.dart';
@@ -10,6 +11,7 @@ import '../../screens/tareas/tareas_screen.dart';
 import '../../screens/tareas/crear_tarea_screen.dart';
 import '../../screens/tareas/editar_tarea_screen.dart';
 import '../../screens/configuracion/configuracion_screen.dart';
+import '../../screens/configuracion/productividad_screen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
@@ -56,6 +58,14 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/configuracion',
             builder: (context, state) => const ConfiguracionScreen(),
+          ),
+          GoRoute(
+            path: '/configuracion/perfil',
+            builder: (context, state) => const EditarPerfilScreen(),
+          ),
+          GoRoute(
+            path: '/configuracion/productividad',
+            builder: (context, state) => const ProductividadScreen(),
           ),
         ],
       ),
