@@ -149,8 +149,12 @@ class _CalendarioScreenState extends ConsumerState<CalendarioScreen> {
                                 color: Colors.grey,
                                 size: 18,
                               ),
-                              onTap: () =>
-                                  context.push('/evento/editar', extra: evento),
+                              onTap: () {
+                                context.push(
+                                  '/evento/editar',
+                                  extra: evento,
+                                ); //On tap
+                              },
                             ),
                           );
                         },

@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../data/database/database_service.dart';
-import '../../providers/usuario_provider.dart';
 import '../../screens/splash/splash_screen.dart';
 import '../../screens/perfil/configurar_perfil_screen.dart';
 import '../../screens/calendario/calendario_screen.dart';
 import '../../screens/calendario/crear_evento_screen.dart';
 import '../../screens/calendario/editar_evento_screen.dart';
 import '../../screens/tareas/tareas_screen.dart';
+import '../../screens/tareas/crear_tarea_screen.dart';
+import '../../screens/tareas/editar_tarea_screen.dart';
 import '../../screens/configuracion/configuracion_screen.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(
@@ -42,6 +43,15 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/tareas',
             builder: (context, state) => const TareasScreen(),
+          ),
+          GoRoute(
+            path: '/tarea/crear',
+            builder: (context, state) => const CrearTareaScreen(),
+          ),
+          GoRoute(
+            path: '/tarea/editar',
+            builder: (context, state) =>
+                EditarTareaScreen(tarea: state.extra as Tarea),
           ),
           GoRoute(
             path: '/configuracion',
@@ -84,7 +94,8 @@ class MainShell extends StatelessWidget {
 
   int _currentIndex(BuildContext context) {
     final location = GoRouterState.of(context).uri.toString();
-    if (location.startsWith('/tareas')) return 1;
+    if (location.startsWith('/tareas') || location.startsWith('/tarea'))
+      return 1;
     if (location.startsWith('/configuracion')) return 2;
     return 0;
   }
