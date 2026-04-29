@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:table_calendar/table_calendar.dart';
 import '../../data/database/database_service.dart';
 import '../../providers/eventos_provider.dart';
+import '../../providers/usuario_provider.dart';
 
 class CalendarioScreen extends ConsumerStatefulWidget {
   const CalendarioScreen({super.key});
@@ -76,6 +77,15 @@ class _CalendarioScreenState extends ConsumerState<CalendarioScreen> {
   @override
   Widget build(BuildContext context) {
     final eventosAsync = ref.watch(eventosProvider);
+    final usuarioAsync = ref.watch(usuarioProvider);
+
+    final primerDia = usuarioAsync.when(
+      data: (u) => u?.primerDia == 'domingo'
+          ? StartingDayOfWeek.sunday
+          : StartingDayOfWeek.monday,
+      loading: () => StartingDayOfWeek.monday,
+      error: (_, __) => StartingDayOfWeek.monday,
+    );
 
     return Scaffold(
       appBar: AppBar(title: const Text('Calendario'), centerTitle: true),
@@ -90,6 +100,7 @@ class _CalendarioScreenState extends ConsumerState<CalendarioScreen> {
                 lastDay: DateTime(2030),
                 focusedDay: _focusedDay,
                 selectedDayPredicate: (day) => isSameDay(day, _selectedDay),
+                startingDayOfWeek: primerDia,
                 onDaySelected: (selected, focused) {
                   setState(() {
                     _selectedDay = selected;
@@ -149,12 +160,8 @@ class _CalendarioScreenState extends ConsumerState<CalendarioScreen> {
                                 color: Colors.grey,
                                 size: 18,
                               ),
-                              onTap: () {
-                                context.push(
-                                  '/evento/editar',
-                                  extra: evento,
-                                ); //On tap
-                              },
+                              onTap: () =>
+                                  context.push('/evento/editar', extra: evento),
                             ),
                           );
                         },
