@@ -36,9 +36,7 @@ class _ConfigurarPerfilScreenState
       lastDate: hoy,
       locale: const Locale('es', 'MX'),
     );
-    if (fecha != null) {
-      setState(() => _fechaNacimiento = fecha);
-    }
+    if (fecha != null) setState(() => _fechaNacimiento = fecha);
   }
 
   Future<void> _guardar() async {
@@ -82,106 +80,167 @@ class _ConfigurarPerfilScreenState
 
   @override
   Widget build(BuildContext context) {
-    final tema = Theme.of(context);
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 40),
-                Text(
-                  'Bienvenido',
-                  style: tema.textTheme.headlineMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
+          child: Column(
+            children: [
+              // Header
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 48,
+                ),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: isDark
+                        ? [const Color(0xFF1A1A2E), const Color(0xFF2D1B69)]
+                        : [const Color(0xFF7C3AED), const Color(0xFF4C1D95)],
                   ),
                 ),
-                const SizedBox(height: 8),
-                Text(
-                  'Cuéntanos un poco sobre ti para comenzar',
-                  style: tema.textTheme.bodyMedium?.copyWith(
-                    color: Colors.grey[600],
-                  ),
-                ),
-                const SizedBox(height: 40),
-                TextFormField(
-                  controller: _nombreCtrl,
-                  decoration: const InputDecoration(
-                    labelText: 'Nombre',
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.person_outline),
-                  ),
-                  textCapitalization: TextCapitalization.words,
-                  validator: (v) => (v == null || v.trim().isEmpty)
-                      ? 'El nombre es obligatorio'
-                      : null,
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _apellidosCtrl,
-                  decoration: const InputDecoration(
-                    labelText: 'Apellidos',
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.person_outline),
-                  ),
-                  textCapitalization: TextCapitalization.words,
-                  validator: (v) => (v == null || v.trim().isEmpty)
-                      ? 'Los apellidos son obligatorios'
-                      : null,
-                ),
-                const SizedBox(height: 16),
-                GestureDetector(
-                  onTap: _seleccionarFecha,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 16,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'PEAKLESS',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 32,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 4,
+                      ),
                     ),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey),
-                      borderRadius: BorderRadius.circular(4),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Tu agenda inteligente',
+                      style: TextStyle(
+                        color: Colors.white.withOpacity(0.7),
+                        fontSize: 14,
+                        letterSpacing: 1,
+                      ),
                     ),
-                    child: Row(
-                      children: [
-                        const Icon(Icons.cake_outlined, color: Colors.grey),
-                        const SizedBox(width: 12),
-                        Text(
-                          _fechaNacimiento == null
-                              ? 'Fecha de nacimiento'
-                              : '${_fechaNacimiento!.day.toString().padLeft(2, '0')}/'
-                                    '${_fechaNacimiento!.month.toString().padLeft(2, '0')}/'
-                                    '${_fechaNacimiento!.year}',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: _fechaNacimiento == null
-                                ? Colors.grey[600]
-                                : Colors.black,
+                  ],
+                ),
+              ),
+
+              // Formulario
+              Padding(
+                padding: const EdgeInsets.all(24),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 8),
+                      Text(
+                        'Crea tu perfil',
+                        style: theme.textTheme.headlineSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Solo necesitamos algunos datos para comenzar',
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: Colors.grey[500],
+                        ),
+                      ),
+                      const SizedBox(height: 32),
+                      TextFormField(
+                        controller: _nombreCtrl,
+                        decoration: const InputDecoration(
+                          labelText: 'Nombre',
+                          prefixIcon: Icon(Icons.person_outline),
+                        ),
+                        textCapitalization: TextCapitalization.words,
+                        validator: (v) => (v == null || v.trim().isEmpty)
+                            ? 'El nombre es obligatorio'
+                            : null,
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: _apellidosCtrl,
+                        decoration: const InputDecoration(
+                          labelText: 'Apellidos',
+                          prefixIcon: Icon(Icons.person_outline),
+                        ),
+                        textCapitalization: TextCapitalization.words,
+                        validator: (v) => (v == null || v.trim().isEmpty)
+                            ? 'Los apellidos son obligatorios'
+                            : null,
+                      ),
+                      const SizedBox(height: 16),
+                      GestureDetector(
+                        onTap: _seleccionarFecha,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 16,
+                          ),
+                          decoration: BoxDecoration(
+                            color: isDark
+                                ? const Color(0xFF1A1A2E)
+                                : const Color(0xFFF8F7FF),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: isDark
+                                  ? const Color(0xFF2D2D4E)
+                                  : const Color(0xFFDDD6FE),
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.cake_outlined,
+                                color: Colors.grey[500],
+                              ),
+                              const SizedBox(width: 12),
+                              Text(
+                                _fechaNacimiento == null
+                                    ? 'Fecha de nacimiento'
+                                    : '${_fechaNacimiento!.day.toString().padLeft(2, '0')}/'
+                                          '${_fechaNacimiento!.month.toString().padLeft(2, '0')}/'
+                                          '${_fechaNacimiento!.year}',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: _fechaNacimiento == null
+                                      ? Colors.grey[500]
+                                      : theme.textTheme.bodyLarge?.color,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                      const SizedBox(height: 40),
+                      SizedBox(
+                        width: double.infinity,
+                        height: 52,
+                        child: ElevatedButton(
+                          onPressed: _guardando ? null : _guardar,
+                          child: _guardando
+                              ? const SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: Colors.white,
+                                  ),
+                                )
+                              : const Text('Comenzar'),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 40),
-                SizedBox(
-                  width: double.infinity,
-                  height: 50,
-                  child: ElevatedButton(
-                    onPressed: _guardando ? null : _guardar,
-                    child: _guardando
-                        ? const CircularProgressIndicator()
-                        : const Text(
-                            'Comenzar',
-                            style: TextStyle(fontSize: 16),
-                          ),
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
