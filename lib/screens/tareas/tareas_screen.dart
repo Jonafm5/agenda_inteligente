@@ -68,6 +68,12 @@ class TareasScreen extends ConsumerWidget {
                       .updateTarea(
                         TareasCompanion(
                           id: drift.Value(tarea.id),
+                          usuarioId: drift.Value(tarea.usuarioId),
+                          titulo: drift.Value(tarea.titulo),
+                          descripcion: drift.Value(tarea.descripcion),
+                          fechaLimite: drift.Value(tarea.fechaLimite),
+                          horaLimite: drift.Value(tarea.horaLimite),
+                          prioridad: drift.Value(tarea.prioridad),
                           estado: const drift.Value('vencida'),
                         ),
                       );

@@ -63,6 +63,17 @@ class _CrearTareaScreenState extends ConsumerState<CrearTareaScreen> {
       final db = ref.read(databaseProvider);
       final usuario = await ref.read(usuarioProvider.future);
 
+      if (usuario == null) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('No se encontró el perfil de usuario'),
+            ),
+          );
+        }
+        return;
+      }
+
       await db.insertTarea(
         TareasCompanion.insert(
           usuarioId: usuario!.id,
