@@ -5,6 +5,8 @@ import 'package:drift/drift.dart' as drift;
 import '../../data/database/database_service.dart';
 import '../../providers/tareas_provider.dart';
 import '../../providers/database_provider.dart';
+import '../../core/utils/hora_utils.dart';
+import '../../providers/usuario_provider.dart';
 
 class TareasScreen extends ConsumerWidget {
   const TareasScreen({super.key});
@@ -44,11 +46,30 @@ class TareasScreen extends ConsumerWidget {
     }
   }
 
+  int _ordenPrioridad(String prioridad) {
+    switch (prioridad) {
+      case 'alta':
+        return 0;
+      case 'media':
+        return 1;
+      case 'baja':
+        return 2;
+      default:
+        return 3;
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final tareasAsync = ref.watch(tareasProvider);
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final usuarioAsync = ref.watch(usuarioProvider);
+    final formatoHora = usuarioAsync.when(
+      data: (u) => u?.formatoHora ?? '24h',
+      loading: () => '24h',
+      error: (_, __) => '24h',
+    );
 
     return Scaffold(
       body: NestedScrollView(
@@ -132,15 +153,26 @@ class TareasScreen extends ConsumerWidget {
             }
 
             // Separar tareas por estado
-            final pendientes = tareas
-                .where((t) => t.estado == 'pendiente')
-                .toList();
-            final vencidas = tareas
-                .where((t) => t.estado == 'vencida')
-                .toList();
-            final completadas = tareas
-                .where((t) => t.estado == 'completada')
-                .toList();
+            final pendientes =
+                tareas.where((t) => t.estado == 'pendiente').toList()
+                  //agregamos prioridad
+                  ..sort(
+                    (a, b) => _ordenPrioridad(
+                      a.prioridad,
+                    ).compareTo(_ordenPrioridad(b.prioridad)),
+                  );
+            final vencidas = tareas.where((t) => t.estado == 'vencida').toList()
+              ..sort(
+                (a, b) => _ordenPrioridad(
+                  a.prioridad,
+                ).compareTo(_ordenPrioridad(b.prioridad)),
+              );
+            final completadas =
+                tareas.where((t) => t.estado == 'completada').toList()..sort(
+                  (a, b) => _ordenPrioridad(
+                    a.prioridad,
+                  ).compareTo(_ordenPrioridad(b.prioridad)),
+                );
 
             return ListView(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -159,6 +191,7 @@ class TareasScreen extends ConsumerWidget {
                       colorEstado: _colorEstado(t.estado),
                       iconEstado: _iconEstado(t.estado),
                       ref: ref,
+                      formatoHora: formatoHora,
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -177,6 +210,7 @@ class TareasScreen extends ConsumerWidget {
                       colorEstado: _colorEstado(t.estado),
                       iconEstado: _iconEstado(t.estado),
                       ref: ref,
+                      formatoHora: formatoHora,
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -195,6 +229,7 @@ class TareasScreen extends ConsumerWidget {
                       colorEstado: _colorEstado(t.estado),
                       iconEstado: _iconEstado(t.estado),
                       ref: ref,
+                      formatoHora: formatoHora,
                     ),
                   ),
                 ],
@@ -272,6 +307,7 @@ class _TareaCard extends StatelessWidget {
   final Color colorEstado;
   final IconData iconEstado;
   final WidgetRef ref;
+  final String formatoHora;
 
   const _TareaCard({
     required this.tarea,
@@ -280,6 +316,7 @@ class _TareaCard extends StatelessWidget {
     required this.colorEstado,
     required this.iconEstado,
     required this.ref,
+    required this.formatoHora,
   });
 
   @override
@@ -330,7 +367,7 @@ class _TareaCard extends StatelessWidget {
         subtitle: tarea.fechaLimite != null
             ? Text(
                 'Vence: ${tarea.fechaLimite}'
-                '${tarea.horaLimite != null ? ' a las ${tarea.horaLimite}' : ''}',
+                '${tarea.horaLimite != null ? ' a las ${formatearHora(tarea.horaLimite!, formatoHora)}' : ''}',
                 style: TextStyle(
                   fontSize: 12,
                   color: tarea.estado == 'vencida'

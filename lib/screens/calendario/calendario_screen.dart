@@ -5,6 +5,7 @@ import 'package:table_calendar/table_calendar.dart';
 import '../../data/database/database_service.dart';
 import '../../providers/eventos_provider.dart';
 import '../../providers/usuario_provider.dart';
+import '../../core/utils/hora_utils.dart';
 
 class CalendarioScreen extends ConsumerStatefulWidget {
   const CalendarioScreen({super.key});
@@ -45,7 +46,7 @@ class _CalendarioScreenState extends ConsumerState<CalendarioScreen> {
         default:
           return isSameDay(fecha, dia);
       }
-    }).toList();
+    }).toList()..sort((a, b) => a.horaInicio.compareTo(b.horaInicio));
   }
 
   String _nombreDia(int weekday) {
@@ -87,6 +88,12 @@ class _CalendarioScreenState extends ConsumerState<CalendarioScreen> {
           : StartingDayOfWeek.monday,
       loading: () => StartingDayOfWeek.monday,
       error: (_, __) => StartingDayOfWeek.monday,
+    );
+
+    final formatoHora = usuarioAsync.when(
+      data: (u) => u?.formatoHora ?? '24h',
+      loading: () => '24h',
+      error: (_, __) => '24h',
     );
 
     return Scaffold(
@@ -304,7 +311,7 @@ class _CalendarioScreenState extends ConsumerState<CalendarioScreen> {
                                   ),
                                 ),
                                 subtitle: Text(
-                                  evento.horaInicio,
+                                  formatearHora(evento.horaInicio, formatoHora),
                                   style: TextStyle(
                                     color: Colors.grey[500],
                                     fontSize: 13,
